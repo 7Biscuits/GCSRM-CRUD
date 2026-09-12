@@ -1,0 +1,618 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Task Management API",
+  "dateExported": "2026-09-12T10:15:00.000Z",
+  "version": "1.1",
+  "folders": [
+    {
+      "_id": "folder_general",
+      "name": "1. General & Docs",
+      "containerId": "",
+      "created": "2026-09-12T10:15:00.000Z"
+    },
+    {
+      "_id": "folder_create",
+      "name": "2. Create Task (POST)",
+      "containerId": "",
+      "created": "2026-09-12T10:15:00.000Z"
+    },
+    {
+      "_id": "folder_read",
+      "name": "3. Read Tasks (GET)",
+      "containerId": "",
+      "created": "2026-09-12T10:15:00.000Z"
+    },
+    {
+      "_id": "folder_update",
+      "name": "4. Update Task (PUT)",
+      "containerId": "",
+      "created": "2026-09-12T10:15:00.000Z"
+    },
+    {
+      "_id": "folder_delete",
+      "name": "5. Delete Task (DELETE)",
+      "containerId": "",
+      "created": "2026-09-12T10:15:00.000Z"
+    }
+  ],
+  "requests": [
+    {
+      "_id": "req_root",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_general",
+      "name": "Get API Info",
+      "url": "{{baseUrl}}/",
+      "method": "GET",
+      "sortNum": 1000,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_docs_json",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_general",
+      "name": "Get OpenAPI Spec JSON",
+      "url": "{{baseUrl}}/api/docs.json",
+      "method": "GET",
+      "sortNum": 1010,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_success",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_create",
+      "name": "Create Task - Full Payload (Success 201)",
+      "url": "{{baseUrl}}/api/tasks",
+      "method": "POST",
+      "sortNum": 2000,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Complete backend recruitment task\",\n  \"description\": \"Build complete CRUD API with Node.js, Express, MongoDB, and TypeScript\",\n  \"status\": \"in_progress\",\n  \"dueDate\": \"2026-10-01T12:00:00.000Z\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.data._id",
+          "action": "setto",
+          "value": "taskId"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_minimal",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_create",
+      "name": "Create Task - Minimal Payload (Success 201)",
+      "url": "{{baseUrl}}/api/tasks",
+      "method": "POST",
+      "sortNum": 2010,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Quick Note Task\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "201"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_empty_title",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_create",
+      "name": "Create Task - Empty Title (Error 400)",
+      "url": "{{baseUrl}}/api/tasks",
+      "method": "POST",
+      "sortNum": 2020,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"   \",\n  \"status\": \"pending\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "400"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_invalid_status",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_create",
+      "name": "Create Task - Invalid Status (Error 400)",
+      "url": "{{baseUrl}}/api/tasks",
+      "method": "POST",
+      "sortNum": 2030,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Invalid Status Task\",\n  \"status\": \"not_a_valid_status\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "400"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_invalid_date",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_create",
+      "name": "Create Task - Invalid Due Date (Error 400)",
+      "url": "{{baseUrl}}/api/tasks",
+      "method": "POST",
+      "sortNum": 2040,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Invalid Date Task\",\n  \"dueDate\": \"invalid-date-string\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "400"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_all",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_read",
+      "name": "Get All Tasks (Success 200)",
+      "url": "{{baseUrl}}/api/tasks",
+      "method": "GET",
+      "sortNum": 3000,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_filter_status",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_read",
+      "name": "Get Tasks - Filter by Status (Success 200)",
+      "url": "{{baseUrl}}/api/tasks?status=in_progress",
+      "method": "GET",
+      "sortNum": 3010,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [
+        {
+          "name": "status",
+          "value": "in_progress",
+          "isPath": false
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_filter_title",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_read",
+      "name": "Get Tasks - Filter by Title (Success 200)",
+      "url": "{{baseUrl}}/api/tasks?title=recruitment",
+      "method": "GET",
+      "sortNum": 3020,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [
+        {
+          "name": "title",
+          "value": "recruitment",
+          "isPath": false
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_by_id_success",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_read",
+      "name": "Get Task by ID (Success 200)",
+      "url": "{{baseUrl}}/api/tasks/{{taskId}}",
+      "method": "GET",
+      "sortNum": 3030,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_by_id_malformed",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_read",
+      "name": "Get Task by ID - Malformed ID (Error 400)",
+      "url": "{{baseUrl}}/api/tasks/invalid-objectid",
+      "method": "GET",
+      "sortNum": 3040,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "400"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_by_id_not_found",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_read",
+      "name": "Get Task by ID - Not Found (Error 404)",
+      "url": "{{baseUrl}}/api/tasks/507f1f77bcf86cd799439011",
+      "method": "GET",
+      "sortNum": 3050,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "404"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_by_title_success",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_read",
+      "name": "Get Task by Title (Success 200)",
+      "url": "{{baseUrl}}/api/tasks/title/Complete%20backend%20recruitment%20task",
+      "method": "GET",
+      "sortNum": 3060,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_by_title_not_found",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_read",
+      "name": "Get Task by Title - Not Found (Error 404)",
+      "url": "{{baseUrl}}/api/tasks/title/Non%20Existent%20Task%20Title",
+      "method": "GET",
+      "sortNum": 3070,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "404"
+        }
+      ]
+    },
+    {
+      "_id": "req_update_success",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_update",
+      "name": "Update Task - Full Update (Success 200)",
+      "url": "{{baseUrl}}/api/tasks/{{taskId}}",
+      "method": "PUT",
+      "sortNum": 4000,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Complete backend recruitment task (Updated)\",\n  \"description\": \"CRUD endpoints, validation, and documentation verified\",\n  \"status\": \"completed\",\n  \"dueDate\": \"2026-10-31T23:59:59.000Z\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_update_partial_status",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_update",
+      "name": "Update Task - Partial Status Only (Success 200)",
+      "url": "{{baseUrl}}/api/tasks/{{taskId}}",
+      "method": "PUT",
+      "sortNum": 4010,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"status\": \"completed\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "_id": "req_update_empty_body",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_update",
+      "name": "Update Task - Empty Body (Error 400)",
+      "url": "{{baseUrl}}/api/tasks/{{taskId}}",
+      "method": "PUT",
+      "sortNum": 4020,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "400"
+        }
+      ]
+    },
+    {
+      "_id": "req_update_invalid_status",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_update",
+      "name": "Update Task - Invalid Status (Error 400)",
+      "url": "{{baseUrl}}/api/tasks/{{taskId}}",
+      "method": "PUT",
+      "sortNum": 4030,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"status\": \"invalid_status_value\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "400"
+        }
+      ]
+    },
+    {
+      "_id": "req_update_not_found",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_update",
+      "name": "Update Task - Not Found (Error 404)",
+      "url": "{{baseUrl}}/api/tasks/507f1f77bcf86cd799439011",
+      "method": "PUT",
+      "sortNum": 4040,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Updated Title\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "404"
+        }
+      ]
+    },
+    {
+      "_id": "req_delete_malformed",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_delete",
+      "name": "Delete Task - Malformed ID (Error 400)",
+      "url": "{{baseUrl}}/api/tasks/not-valid-id",
+      "method": "DELETE",
+      "sortNum": 5000,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "400"
+        }
+      ]
+    },
+    {
+      "_id": "req_delete_not_found",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_delete",
+      "name": "Delete Task - Not Found (Error 404)",
+      "url": "{{baseUrl}}/api/tasks/507f1f77bcf86cd799439011",
+      "method": "DELETE",
+      "sortNum": 5010,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "404"
+        }
+      ]
+    },
+    {
+      "_id": "req_delete_success",
+      "colId": "col_task_mgmt",
+      "containerId": "folder_delete",
+      "name": "Delete Task - By ID (Success 200)",
+      "url": "{{baseUrl}}/api/tasks/{{taskId}}",
+      "method": "DELETE",
+      "sortNum": 5020,
+      "created": "2026-09-12T10:15:00.000Z",
+      "modified": "2026-09-12T10:15:00.000Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "action": "equal",
+          "value": "200"
+        }
+      ]
+    }
+  ]
+}
