@@ -1,10 +1,10 @@
 services:
   - type: web
     name: task-management-api
-    runtime: bun
+    runtime: node
     plan: free
-    buildCommand: bun install
-    startCommand: bun src/server.ts
+    buildCommand: npm install && npm run build
+    startCommand: node dist/server.js
     envVars:
       - key: NODE_ENV
         value: production

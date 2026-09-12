@@ -1,15 +1,14 @@
 {
   "name": "task-management-api",
   "version": "1.0.0",
-  "description": "CRUD API for Task Management using Express, MongoDB, TypeScript, and Bun",
-  "main": "src/server.ts",
+  "description": "CRUD API for Task Management using Express, MongoDB, and TypeScript",
+  "main": "dist/server.js",
   "scripts": {
     "dev": "bun --watch src/server.ts",
-    "start": "bun src/server.ts",
-    "build": "bun build src/server.ts --outdir ./dist --target bun"
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "keywords": [
-    "bun",
     "express",
     "mongodb",
     "typescript",
@@ -24,14 +23,15 @@
     "mongoose": "^8.9.5",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
+    "typescript": "^5.7.3",
     "zod": "^4.6.2"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
+    "@types/node": "^22.10.7",
     "@types/swagger-jsdoc": "^6.0.4",
-    "@types/swagger-ui-express": "^4.1.8",
-    "typescript": "^5.7.3"
+    "@types/swagger-ui-express": "^4.1.8"
   }
 }
