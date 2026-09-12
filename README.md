@@ -60,15 +60,14 @@ A clean, robust RESTful CRUD API for managing tasks built with **Node.js**, **Ex
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or newer)
-- [Yarn](https://yarnpkg.com/) (`npm install -g yarn`)
+- [Bun](https://bun.sh/) (v1.0 or newer)
 - [MongoDB](https://www.mongodb.com/) running locally or via connection string
 
 ### Installation & Setup
 
 1. Install dependencies:
    ```bash
-   yarn install
+   bun install
    ```
 
 2. Configure environment variables:
@@ -81,15 +80,14 @@ A clean, robust RESTful CRUD API for managing tasks built with **Node.js**, **Ex
    MONGODB_URI=mongodb://127.0.0.1:27017/task_db
    ```
 
-3. Run in Development Mode:
+3. Run in Development Mode (with hot reloading):
    ```bash
-   yarn dev
+   bun dev
    ```
 
-4. Build and Run in Production:
+4. Run in Production:
    ```bash
-   yarn build
-   yarn start
+   bun start
    ```
 
 ---

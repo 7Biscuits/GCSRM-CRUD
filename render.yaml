@@ -1,10 +1,10 @@
 services:
   - type: web
     name: task-management-api
-    runtime: node
+    runtime: bun
     plan: free
-    buildCommand: yarn install && yarn build
-    startCommand: yarn start
+    buildCommand: bun install
+    startCommand: bun src/server.ts
     envVars:
       - key: NODE_ENV
         value: production
