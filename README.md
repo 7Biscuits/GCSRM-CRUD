@@ -92,6 +92,20 @@ A clean, robust RESTful CRUD API for managing tasks built with **Node.js**, **Ex
 
 ---
 
+## Web User Interface
+
+A modern, responsive web UI is included to perform all CRUD operations directly in your browser:
+- **Web App**: Open [http://localhost:3000/](http://localhost:3000/)
+- **Features**:
+  - Create tasks with title, description, status, and due date.
+  - View live task list with status badges and due dates.
+  - Filter tasks by status (`All`, `Pending`, `In Progress`, `Completed`) and search by title.
+  - Edit existing tasks via an edit dialog.
+  - Quick-toggle task completion via checkbox.
+  - Delete tasks with confirmation.
+
+---
+
 ## API Documentation (Swagger)
 
 Once the server is running, you can access the interactive Swagger UI and OpenAPI JSON spec:

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --ring: rgba(79, 70, 229, 0.2);
+      
+      --status-pending-bg: #fef3c7;
+      --status-pending-text: #92400e;
+      --status-in-progress-bg: #e0e7ff;
+      --status-in-progress-text: #3730a3;
+      --status-completed-bg: #dcfce7;
+      --status-completed-text: #166534;
+      
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --radius: 10px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;
+        --card-bg: #1e293b;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --border: #334155;
+        --ring: rgba(99, 102, 241, 0.3);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+    }
+
+    header {
+      max-width: 900px;
+      margin: 0 auto 28px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo-area h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-area p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .link-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    /* Form styling */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group-full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 0.9375rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .btn {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 18px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: white;
+      border-color: var(--danger);
+    }
+
+    /* Filters Bar */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .pill-btn {
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-box {
+      max-width: 260px;
+      width: 100%;
+    }
+
+    .search-box input {
+      padding: 8px 12px;
+      font-size: 0.875rem;
+    }
+
+    /* Task List */
+    .tasks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .task-item:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .task-content {
+      flex: 1;
+    }
+
+    .task-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .task-title.completed {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .badge-pending {
+      background: var(--status-pending-bg);
+      color: var(--status-pending-text);
+    }
+
+    .badge-in_progress {
+      background: var(--status-in-progress-bg);
+      color: var(--status-in-progress-text);
+    }
+
+    .badge-completed {
+      background: var(--status-completed-bg);
+      color: var(--status-completed-text);
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      font-size: 0.8125rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .action-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .action-btn.delete:hover {
+      border-color: var(--danger);
+      background: var(--danger);
+      color: white;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--text-muted);
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    /* Modal / Dialog */
+    dialog {
+      margin: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      color: var(--text);
+      padding: 24px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(2px);
+    }
+
+    dialog h3 {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* Toast notifications */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: #1e293b;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #toast.error {
+      background: var(--danger);
+    }
+
+    #toast.success {
+      background: #16a34a;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-area">
+      <h1>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+        Task Manager
+      </h1>
+      <p>Full CRUD API interface &bull; Node.js / Bun &bull; MongoDB</p>
+    </div>
+    <div class="header-actions">
+      <a href="/api/docs" class="link-btn" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        Swagger Docs
+      </a>
+      <a href="/api/tasks" class="link-btn" target="_blank">
+        Raw API (JSON)
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Add Task Card -->
+    <section class="card">
+      <h2>Add New Task</h2>
+      <form id="create-task-form">
+        <div class="form-grid">
+          <div class="form-group-full">
+            <label for="task-title">Title *</label>
+            <input type="text" id="task-title" name="title" placeholder="e.g., Deploy backend service" required>
+          </div>
+
+          <div class="form-group-full">
+            <label for="task-desc">Description</label>
+            <textarea id="task-desc" name="description" placeholder="Add details or acceptance criteria..."></textarea>
+          </div>
+
+          <div>
+            <label for="task-status">Status</label>
+            <select id="task-status" name="status">
+              <option value="pending" selected>Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="task-due-date">Due Date</label>
+            <input type="date" id="task-due-date" name="dueDate">
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+          <button type="submit" class="btn btn-primary" id="btn-create">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Create Task
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Tasks List Card -->
+    <section class="card">
+      <div class="controls-bar">
+        <div class="filter-pills" id="status-filters">
+          <button class="pill-btn active" data-filter="all">All</button>
+          <button class="pill-btn" data-filter="pending">Pending</button>
+          <button class="pill-btn" data-filter="in_progress">In Progress</button>
+          <button class="pill-btn" data-filter="completed">Completed</button>
+        </div>
+
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="Search tasks by title...">
+        </div>
+      </div>
+
+      <div id="tasks-container" class="tasks-list">
+        <!-- Tasks dynamically rendered here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit Task Dialog (Native Modal) -->
+  <dialog id="edit-dialog">
+    <h3>Edit Task</h3>
+    <form id="edit-task-form">
+      <input type="hidden" id="edit-task-id">
+      <div class="form-grid">
+        <div class="form-group-full">
+          <label for="edit-title">Title *</label>
+          <input type="text" id="edit-title" required>
+        </div>
+
+        <div class="form-group-full">
+          <label for="edit-desc">Description</label>
+          <textarea id="edit-desc"></textarea>
+        </div>
+
+        <div>
+          <label for="edit-status">Status</label>
+          <select id="edit-status">
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="edit-due-date">Due Date</label>
+          <input type="date" id="edit-due-date">
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-edit">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast"></div>
+
+  <script>
+    const API_BASE = '/api/tasks';
+    let allTasks = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // DOM Elements
+    const createForm = document.getElementById('create-task-form');
+    const tasksContainer = document.getElementById('tasks-container');
+    const statusFilters = document.getElementById('status-filters');
+    const searchInput = document.getElementById('search-input');
+    const editDialog = document.getElementById('edit-dialog');
+    const editForm = document.getElementById('edit-task-form');
+    const btnCancelEdit = document.getElementById('btn-cancel-edit');
+    const toast = document.getElementById('toast');
+
+    // Show Toast Notification
+    function showToast(message, type = 'success') {
+      toast.textContent = message;
+      toast.className = `show ${type}`;
+      setTimeout(() => {
+        toast.className = '';
+      }, 3000);
+    }
+
+    // Format date for display
+    function formatDate(dateStr) {
+      if (!dateStr) return null;
+      try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      } catch {
+        return null;
+      }
+    }
+
+    // Format date for HTML input type="date"
+    function toDateInputValue(dateStr) {
+      if (!dateStr) return '';
+      try {
+        const d = new Date(dateStr);
+        return d.toISOString().split('T')[0];
+      } catch {
+        return '';
+      }
+    }
+
+    // Fetch all tasks
+    async function loadTasks() {
+      try {
+        const res = await fetch(API_BASE);
+        const data = await res.json();
+        if (data.success) {
+          allTasks = data.data || [];
+          renderTasks();
+        } else {
+          showToast(data.message || 'Failed to load tasks', 'error');
+        }
+      } catch (err) {
+        showToast('Network error while loading tasks', 'error');
+      }
+    }
+
+    // Render task items
+    function renderTasks() {
+      const filtered = allTasks.filter(task => {
+        const matchesStatus = currentFilter === 'all' || task.status === currentFilter;
+        const matchesSearch = !searchQuery || task.title.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesStatus && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        tasksContainer.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="12" x2="15" y2="12"></line>
+            </svg>
+            <p>No tasks found. Create one above to get started!</p>
+          </div>
+        `;
+        return;
+      }
+
+      tasksContainer.innerHTML = filtered.map(task => {
+        const isDone = task.status === 'completed';
+        const formattedDue = formatDate(task.dueDate);
+
+        return `
+          <div class="task-item" data-id="${task._id}">
+            <div class="task-content">
+              <div class="task-title ${isDone ? 'completed' : ''}">
+                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTaskStatus('${task._id}', this.checked)" title="Toggle completed">
+                <span>${escapeHtml(task.title)}</span>
+                <span class="badge badge-${task.status}">${task.status.replace('_', ' ')}</span>
+              </div>
+              ${task.description ? `<div class="task-desc">${escapeHtml(task.description)}</div>` : ''}
+              <div class="task-meta">
+                ${formattedDue ? `<span>Due: <strong>${formattedDue}</strong></span> &bull;` : ''}
+                <span>Created: ${formatDate(task.createdAt)}</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <button class="action-btn" onclick="openEditModal('${task._id}')" title="Edit task">Edit</button>
+              <button class="action-btn delete" onclick="deleteTask('${task._id}')" title="Delete task">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Toggle Task Completed Status
+    window.toggleTaskStatus = async function(id, isChecked) {
+      const newStatus = isChecked ? 'completed' : 'pending';
+      try {
+        const res = await fetch(`${API_BASE}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          const task = allTasks.find(t => t._id === id);
+          if (task) task.status = newStatus;
+          renderTasks();
+          showToast(`Task marked as ${newStatus}`);
+        } else {
+          showToast(data.message || 'Failed to update status', 'error');
+          loadTasks();
+        }
+      } catch (err) {
+        showToast('Error updating task status', 'error');
+        loadTasks();
+      }
+    };
+
+    // Create New Task (POST)
+    createForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('task-title').value.trim();
+      const description = document.getElementById('task-desc').value.trim();
+      const status = document.getElementById('task-status').value;
+      const dueDateVal = document.getElementById('task-due-date').value;
+
+      const payload = {
+        title,
+        description,
+        status,
+        dueDate: dueDateVal ? new Date(dueDateVal).toISOString() : null,
+      };
+
+      try {
+        const res = await fetch(API_BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          createForm.reset();
+          showToast('Task created successfully!');
+          await loadTasks();
+        } else {
+          const msg = data.errors ? data.errors.join(', ') : data.message;
+          showToast(msg || 'Validation failed', 'error');
+        }
+      } catch {
+        showToast('Failed to create task', 'error');
+      }
+    });
+
+    // Open Edit Modal
+    window.openEditModal = function(id) {
+      const task = allTasks.find(t => t._id === id);
+      if (!task) return;
+
+      document.getElementById('edit-task-id').value = task._id;
+      document.getElementById('edit-title').value = task.title;
+      document.getElementById('edit-desc').value = task.description || '';
+      document.getElementById('edit-status').value = task.status || 'pending';
+      document.getElementById('edit-due-date').value = toDateInputValue(task.dueDate);
+
+      editDialog.showModal();
+    };
+
+    btnCancelEdit.addEventListener('click', () => {
+      editDialog.close();
+    });
+
+    // Save Edit Form (PUT)
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('edit-task-id').value;
+      const title = document.getElementById('edit-title').value.trim();
+      const description = document.getElementById('edit-desc').value.trim();
+      const status = document.getElementById('edit-status').value;
+      const dueDateVal = document.getElementById('edit-due-date').value;
+
+      const payload = {
+        title,
+        description,
+        status,
+        dueDate: dueDateVal ? new Date(dueDateVal).toISOString() : null,
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          editDialog.close();
+          showToast('Task updated successfully!');
+          await loadTasks();
+        } else {
+          const msg = data.errors ? data.errors.join(', ') : data.message;
+          showToast(msg || 'Failed to update task', 'error');
+        }
+      } catch {
+        showToast('Error saving task', 'error');
+      }
+    });
+
+    // Delete Task (DELETE)
+    window.deleteTask = async function(id) {
+      if (!confirm('Are you sure you want to delete this task?')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/${id}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showToast('Task deleted successfully!');
+          allTasks = allTasks.filter(t => t._id !== id);
+          renderTasks();
+        } else {
+          showToast(data.message || 'Failed to delete task', 'error');
+        }
+      } catch {
+        showToast('Error deleting task', 'error');
+      }
+    };
+
+    // Filter Buttons
+    statusFilters.addEventListener('click', (e) => {
+      if (e.target.classList.contains('pill-btn')) {
+        document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+        currentFilter = e.target.getAttribute('data-filter');
+        renderTasks();
+      }
+    });
+
+    // Search Input
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      renderTasks();
+    });
+
+    // Initial Load
+    loadTasks();
+  </script>
+</body>
+</html>

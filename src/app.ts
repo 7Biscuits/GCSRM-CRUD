@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
 import { errorHandler, notFound } from './middleware/error.middleware';
@@ -13,6 +14,9 @@ app.use(cors());
 // Body parser
 app.use(express.json());
 
+// Serve static files from public directory
+app.use(express.static(path.join(process.cwd(), 'public')));
+
 // Swagger Documentation
 (app.use as any)('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/api/docs.json', (_req: Request, res: Response) => {
@@ -20,8 +24,8 @@ app.get('/api/docs.json', (_req: Request, res: Response) => {
   res.json(swaggerSpec);
 });
 
-// Root welcome & doc links
-app.get('/', (_req: Request, res: Response) => {
+// API Info endpoint
+app.get('/api', (_req: Request, res: Response) => {
   res.json({
     name: 'Task Management API',
     version: '1.0.0',
